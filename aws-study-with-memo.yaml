@@ -1,0 +1,50 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: My template with explanation in comments.
+
+Resources:
+  # VPC作成
+  AWSStudyVPC: # ID名
+    Type: AWS::EC2::VPC # 作成するもの（VPCを作成)
+    Properties:
+      # IPv4のCidrBlock
+      CidrBlock: 10.0.0.0/16
+      # 名前解決のためtrueに指定
+      EnableDnsSupport: true # DNS解決を有効か
+      EnableDnsHostnames: true # DNSホスト名を有効化
+      # タグはなしでもよいが名前がわかるようにつけておくほうが良い
+      # インスタンスのnameの欄に表示される
+      Tags:
+        - Key: Name
+          Value: aws-study-vpc
+
+  # InternetGateway作成
+  AWSStudyIGW: # ID名
+    Type: AWS::EC2::InternetGateway # 作成するもの（InternetGatewayを作成)
+    Properties:
+      # タグはなしでもよいが名前がわかるようにつけておくほうが良い
+      # インスタンスのnameの欄に表示される
+      Tags:
+        - Key: Name
+          Value: aws-study-igw
+
+  # InternetGatewayAttachment作成
+  # VPCにIGWを結びつけることでしインターネットを利用できるようにする
+  AWSStudyIGWAttachment: # ID名
+    Type: AWS::EC2::VPCGatewayAttachment # 作成するもの（InternetGatewayAttachmentを作成)
+    Properties:
+      # 使用するInternet Gatewayの指定（ID名で指定）
+      InternetGatewayId: !Ref AWSStudyIGW
+      # 使用するVPCの指定（ID名で指定）
+      VpcId: !Ref AWSStudyVPC
+
+  # Subnet作成
+  AWSStudySubnet1a: # ID名
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.2.0.0/24
+      VpcId: !Ref VPC
+      AvailabilityZone: ap-northeast-1a
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: aws-study-subnet1a

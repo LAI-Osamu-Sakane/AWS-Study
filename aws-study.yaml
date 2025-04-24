@@ -1,0 +1,576 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: A sample template
+
+# Parameters:
+#   Prefix:
+#     Type: String
+#     Default: test
+#     Description: "Fill in the name of the system name."
+#   Env:
+#     Type: String
+#     Default: develop
+#     Description: "Fill in the name of the environment."
+#   Scope:
+#     Type: String
+#     Default: REGIONAL
+#     AllowedValues:
+#       - REGIONAL
+#       - CLOUDFRONT
+#     Description: "Select in the scope of waf(REGIONAL or CLOUDFRONT)"
+#   WebAclAssociationResourceArn:
+#     Type: String
+#     Default: 
+#       AWSstudyELB.arn
+#       # "arn:partition:elasticloadbalancing:ap-northeast-1:339712902003:loadbalancer/app/AWSstudyELB/AWSstudyELB.Id"
+#     # "arn:aws:elasticloadbalancing:ap-northeast-1:XXXXXXXXXXXX:loadbalancer/app/XXXXXXXXXXXX"
+#     Description: Enter RegionalResource(ALB,APIGateway,AppSync) ARN or CloudFront ARN to associate with WEBACL.
+
+Resources:
+  # VPC
+  AWSstudyvpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      # 名前解決のためtrueに指定
+      EnableDnsSupport: true 
+      EnableDnsHostnames: true
+      # タグはなしでもよいが名前がわかるようにつけておくほうが良い
+      # インスタンスのnameの欄に表示される
+      Tags:
+        - Key: Name
+          Value: AWS-study-vpc
+
+  # VPCEndPoint
+  AWSstudyvpcendpoint:
+    Type: "AWS::EC2::VPCEndpoint"
+    Properties:
+      PrivateDnsEnabled: false
+      IpAddressType: "not-specified"
+      DnsOptions:
+        PrivateDnsOnlyForInboundResolverEndpoint: "NotSpecified"
+        DnsRecordIpType: "not-specified"
+      ResourceConfigurationArn: ""
+      SecurityGroupIds: []
+      SubnetIds: []
+      ServiceNetworkArn: ""
+      VpcId: !Ref AWSstudyvpc
+        # Ref: "EC2VPC"
+      RouteTableIds:
+        - !Ref PrivateRouteTable1
+        - !Ref PrivateRouteTable2
+      # - Ref: "EC2RouteTableGM"
+      # - Ref: "EC2RouteTableN8"
+      ServiceName: "com.amazonaws.ap-northeast-1.s3"
+      PolicyDocument:
+        Version: "2008-10-17"
+        Statement:
+        - Resource: "*"
+          Action: "*"
+          Effect: "Allow"
+          Principal: "*"
+      VpcEndpointType: "Gateway"
+      Tags:
+      - Value: "StudentManagement-s3"
+        Key: "Name"
+
+
+  # InternetGateway
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: AWS-study-igw
+
+  # internetGatewayAttachment
+  # ここで上記のInternetGatewayを設定
+  InternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref AWSstudyvpc
+
+  # Subnet
+  # 1つ目のパブリックサブネット
+  PublicSubnet1a:
+    Type: AWS::EC2::Subnet
+    Properties:
+      # !Refを使用してVPCの設定を参照（今回の名前がAWSstudyvpc）
+      VpcId: !Ref AWSstudyvpc
+      # 本来ならAZはハードコーディング(そのままコードに記述すること）で注意されている
+      AvailabilityZone: ap-northeast-1a
+      CidrBlock: 10.0.0.0/24
+      # パブリックIPを使用できるようにするためtrue
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: aws-study-subnet-public1-ap-northeast-1a
+
+  # 2つ目のパブリックサブネット。1つ目と内容は同じAZとTagsのValueが少し違うだけ
+  PublicSubnet1c:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref AWSstudyvpc
+      AvailabilityZone: ap-northeast-1c
+      CidrBlock: 10.0.1.0/24
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: aws-study-subnet-public1-ap-northeast-1c
+
+  #1つ目のプライベートサブネット
+  PrivateSubnet1a:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref AWSstudyvpc
+      AvailabilityZone: ap-northeast-1a
+      CidrBlock: 10.0.10.0/24
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: aws-study-subnet-private-ap-northeast-1a
+
+  # 2つ目のプライベートサブネット
+  PrivateSubnet1c:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref AWSstudyvpc
+      AvailabilityZone: ap-northeast-1c
+      CidrBlock: 10.0.11.0/24
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: aws-study-subnet-private-ap-northeast-1c
+
+  #1つ目のRDS用プライベートサブネット
+  RDSPrivateSubnet1a:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref AWSstudyvpc
+      AvailabilityZone: ap-northeast-1a
+      CidrBlock: 10.0.20.0/24
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: aws-study-rds-private-ap-northeast-1a
+
+  # 2つ目のRDS用プライベートサブネット
+  RDSPrivateSubnet1c:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref AWSstudyvpc
+      AvailabilityZone: ap-northeast-1c
+      CidrBlock: 10.0.21.0/24
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: aws-study-rds-private-ap-northeast-1c
+
+  # RouteTable
+  # RouteTableをVPCに作成
+  # パブリック用ルートテーブル
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref AWSstudyvpc
+      Tags:
+        - Key: Name
+          Value: aws-study-rtb-public
+
+  # 1つ目のプライベートサブネット用ルートテーブル
+  PrivateRouteTable1:
+      Type: AWS::EC2::RouteTable
+      Properties:
+        VpcId: !Ref AWSstudyvpc
+        Tags:
+          - Key: Name
+            Value: aws-study-rtb-private1-ap-northeast-1a
+
+  # 2つ目のプライベートサブネット用ルートテーブル
+  PrivateRouteTable2:
+      Type: AWS::EC2::RouteTable
+      Properties:
+        VpcId: !Ref AWSstudyvpc
+        Tags:
+          - Key: Name
+            Value: aws-study-rtb-private2-ap-northeast-1c
+
+  # RDS用ルートテーブル
+  RDSPrivateRouteTable:
+      Type: AWS::EC2::RouteTable
+      Properties:
+        VpcId: !Ref AWSstudyvpc
+        Tags:
+          - Key: Name
+            Value: aws-study-rds-rtb-private
+
+  # 外部に出るためのRouteTableの設定
+  DefaultPublicRoute:
+      Type: AWS::EC2::Route
+      DependsOn: InternetGatewayAttachment
+      Properties:
+        RouteTableId: !Ref PublicRouteTable
+        DestinationCidrBlock: 0.0.0.0/0
+        GatewayId: !Ref InternetGateway
+
+  # 各サブネットとルートテーブルを関連付け（パブリックサブネット化）
+  # 1つ目のパブリックサブネット
+  PublicSubnet1aRouteTableAssociation:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        RouteTableId: !Ref PublicRouteTable
+        SubnetId: !Ref PublicSubnet1a
+
+  # 2つ目のパブリックサブネット
+  PublicSubnet1cRouteTableAssociation:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        RouteTableId: !Ref PublicRouteTable
+        SubnetId: !Ref PublicSubnet1c
+
+  # 1つ目のプライベートサブネットとルートテーブルを関連付け
+  PrivateSubnet1aRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable1
+      SubnetId: !Ref PrivateSubnet1a
+
+  # 2つ目のプライベートサブネットとルートテーブルを関連付け
+  PrivateSubnet1cRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable2
+      SubnetId: !Ref PrivateSubnet1c
+
+  # 1つ目RDS用のプライベートサブネットとルートテーブルを関連付け
+  RDSPrivateSubnet1cRouteTableAssociation1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref RDSPrivateRouteTable
+      SubnetId: !Ref RDSPrivateSubnet1a
+
+  # 2つ目RDS用のプライベートサブネットとルートテーブルを関連付け
+  RDSPrivateSubnet1cRouteTableAssociation2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref RDSPrivateRouteTable
+      SubnetId: !Ref RDSPrivateSubnet1c
+
+  NoIngressSecurityGroup:
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+        GroupName: "aws-study-sg"
+        GroupDescription: "Security group with no ingress rule"
+        VpcId: !Ref AWSstudyvpc
+
+  # SecurityGroup
+  #Ec2用のセキュリティグループ
+  AWSstudysgEC2:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: AWS-study-SG-EC2
+      VpcId: !Ref AWSstudyvpc
+      # セキュリティ グループに関連付けられた送信ルール(インバウンド)
+      SecurityGroupIngress:
+        # 今回使用する4種類はすべてIpProtocolはtcpを使用
+        # SSH
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        # HTTP
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        # HTTPS
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+        # カスタムTCP
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: 0.0.0.0/0
+      # セキュリティ グループに関連付けられた受信ルール(アウトバウンド)
+      # すべてのプロトコルを指定する場合は-1を指定
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: AWS-study-SG-EC2
+
+  #RDS用のセキュリティグループ
+  AWSstudysgRDS:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: AWS-study-SG-RDS
+      VpcId: !Ref AWSstudyvpc
+      # セキュリティ グループに関連付けられた送信ルール(インバウンド)
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          SourceSecurityGroupId:  !Ref AWSstudysgEC2
+      # セキュリティ グループに関連付けられた受信ルール(アウトバウンド)
+      # すべてのプロトコルを指定する場合は-1を指定
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: AWS-study-SG-RDS
+
+  # EC2 Instance
+  AWSstudyEC2:
+    Type: AWS::EC2::Instance
+    Properties:
+      # Amazon Linux 2023 のAMI
+      ImageId: !Sub "resolve:ssm:/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64"
+      InstanceType: t2.micro
+      SubnetId: !Ref PublicSubnet1a
+      Tenancy: "default"
+      DisableApiTermination: false
+      InstanceInitiatedShutdownBehavior: stop
+      KeyName: AWSServ
+      Monitoring: false
+      SecurityGroupIds:
+        - !Ref AWSstudysgEC2
+      Tags:
+        - Key: Name
+          Value: AWS-study-EC2
+      
+  # RDS
+  AWSstudyRDS:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      Engine: MySQL
+      EngineVersion: 8.0.41
+      LicenseModel: general-public-license
+      Port: 3306
+      DBInstanceClass: db.t4g.micro
+      # メジャーバージョンは勝手にアップデートすると危険なのでfalse
+      AllowMajorVersionUpgrade: false
+      AutoMinorVersionUpgrade: true
+      # ストレージの割り当て
+      AllocatedStorage: 20
+      StorageType: gp3
+      # バックアップ保存日数
+      BackupRetentionPeriod: 1
+      MasterUsername: root
+      MasterUserPassword: rootroot
+      # バックアップの時間とメンテナンスの日時
+      PreferredBackupWindow: 21:00-22:00
+      PreferredMaintenanceWindow: sun:22:00-sun:23:00
+      DBName: awsstudy
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      VPCSecurityGroups:
+        - !Ref AWSstudysgRDS
+      Tags:
+        - Key: Name
+          Value: AWS-study-RDS
+      
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Created from the RDS 
+      DBSubnetGroupName: rds-subnet-group
+      SubnetIds:
+           - !Ref RDSPrivateSubnet1a
+           - !Ref RDSPrivateSubnet1c
+
+  # ELB
+  AWSstudyELB:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: "AWS-study-ELB"
+      Subnets:
+        - !Ref PublicSubnet1a
+        - !Ref PublicSubnet1c
+      SecurityGroups:
+        - !Ref AWSstudysgEC2
+      Tags:
+        - Key: Name
+          Value: AWS-study-ELB
+
+  #TargetGroup
+  AWSstudyTG:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: aws-study-elb-target-group
+      HealthCheckEnabled: true
+      HealthCheckIntervalSeconds: 30
+      HealthCheckPath: "/"
+      HealthCheckPort: "traffic-port"
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 2
+      IpAddressType: ipv4
+      Matcher: 
+        HttpCode: 200
+      Port: 80
+      Protocol: HTTP
+      ProtocolVersion: HTTP1
+      Tags: 
+        - Key: Name
+          Value: aws-study-elb-target-group
+      Targets: 
+        - Id: !Ref AWSstudyEC2
+          Port: 8080
+      VpcId: !Ref AWSstudyvpc
+
+  ELBListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref AWSstudyELB
+      # LoadBalancerArn: !GetAtt AWSstudyELB.Arn
+      # LoadBalancerArn: "arn:aws:elasticloadbalancing:ap-northeast-1:442426854428:loadbalancer/app/aws-study-alb/9d6ad668f62f6ea4"
+      DefaultActions:
+        - TargetGroupArn: !Ref AWSstudyTG
+        # - TargetGroupArn: !GetAtt AWSstudyTG.Arn
+        # - TargetGroupArn: "arn:aws:elasticloadbalancing:ap-northeast-1:442426854428:targetgroup/aws-study-tg/58782b9a26533bb2"
+          Type: forward
+      Port: 80
+      Protocol: HTTP
+
+  EC2CPUutilizationAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+        # メトリクス
+        Namespace: "AWS/EC2"
+        MetricName: "CPUUtilization"
+        Unit: "Percent"
+
+        # 統計
+        Period: 300
+        Statistic: "Average"
+
+        #評価
+        Threshold: 5
+        ComparisonOperator: "GreaterThanOrEqualToThreshold"
+        DatapointsToAlarm: 2
+        EvaluationPeriods: 3
+        TreatMissingData: "missing"
+  
+  AWSstudyWAF:
+    Type: AWS::WAFv2::WebACL
+    Properties:
+      DefaultAction: 
+        Allow: {}
+      VisibilityConfig:
+            CloudWatchMetricsEnabled: false
+            SampledRequestsEnabled: false
+            MetricName: AWS-study-test
+      Description: "test"
+      Name: AWS-study-web-acl
+      Scope: REGIONAL
+      Rules:
+        - Name: AWS-AWSManagedRulesCommonRuleSet
+          Priority: 1
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesCommonRuleSet
+              ExcludedRules:
+                - Name: NoUserAgent_HEADER
+                - Name: UserAgent_BadBots_HEADER
+                - Name: SizeRestrictions_QUERYSTRING
+                - Name: SizeRestrictions_Cookie_HEADER
+                - Name: SizeRestrictions_BODY
+                - Name: SizeRestrictions_URIPATH
+                - Name: EC2MetaDataSSRF_BODY
+                - Name: EC2MetaDataSSRF_COOKIE
+                - Name: EC2MetaDataSSRF_URIPATH
+                - Name: EC2MetaDataSSRF_QUERYARGUMENTS
+                - Name: GenericLFI_QUERYARGUMENTS
+                - Name: GenericLFI_URIPATH
+                - Name: GenericLFI_BODY
+                - Name: RestrictedExtensions_URIPATH
+                - Name: RestrictedExtensions_QUERYARGUMENTS
+                - Name: GenericRFI_QUERYARGUMENTS
+                - Name: GenericRFI_BODY
+                - Name: GenericRFI_URIPATH
+                - Name: CrossSiteScripting_COOKIE
+                - Name: CrossSiteScripting_QUERYARGUMENTS
+                - Name: CrossSiteScripting_BODY
+                - Name: CrossSiteScripting_URIPATH
+          OverrideAction:
+            None: {}
+          VisibilityConfig:
+            CloudWatchMetricsEnabled: True
+            SampledRequestsEnabled: True
+            MetricName: AWS-AWSManagedRulesCommonRuleSet
+
+  AWSstudyWAFAssociation:
+    Type: AWS::WAFv2::WebACLAssociation
+    Properties:
+      # ResourceArn: "arn:partition:elasticloadbalancing:ap-northeast-1:442426854428:loadbalancer/app/AWSstudyELB/AWSstudyELB.Id"
+      # ResourceArn: !GetAtt AWS-study-ELB.Arn
+      # ResourceArn: "arn:partition:elasticloadbalancing:ap-northeast-1:339712902003:loadbalancer/app/AWSstudyELB/AWSstudyELB.Id"
+      # ResourceArn: "arn:aws:elasticloadbalancing:ap-northeast-1:442426854428:loadbalancer/app/AWS-study-ELB/d0cf6c5ab4c86d65"
+      ResourceArn: !Ref AWSstudyELB
+      # ResourceArn: "arn:aws:elasticloadbalancing:ap-northeast-1:ACCOUNT_ID:loadbalancer/app/AWS-study-ELB/AWSstudyELB.id"
+      WebACLArn: !GetAtt AWSstudyWAF.Arn
+
+  
+
+# # ------------------------------------------------------------#
+# # WAF v2
+# # ------------------------------------------------------------#
+#   # WebAcl:
+#   #   Type: AWS::WAFv2::WebACL
+#   #   Properties: 
+#   #     Name: !Sub ${Env}-${Prefix}-web-acl
+#   #     Scope: !Ref Scope
+#   #     DefaultAction:
+#   #       Allow: {}
+#   #     VisibilityConfig:
+#   #       CloudWatchMetricsEnabled: true
+#   #       SampledRequestsEnabled: true
+#   #       MetricName: !Sub ${Env}-${Prefix}-web-acl
+#   #     Rules:
+#   #       -
+#   #         Name: AWS-AWSManagedRulesCommonRuleSet
+#   #         Priority: 1
+#   #         Statement:
+#   #           ManagedRuleGroupStatement:
+#   #             VendorName: AWS
+#   #             Name: AWSManagedRulesCommonRuleSet
+#   #             ExcludedRules:
+#   #               - Name: NoUserAgent_HEADER
+#   #               - Name: UserAgent_BadBots_HEADER
+#   #               - Name: SizeRestrictions_QUERYSTRING
+#   #               - Name: SizeRestrictions_Cookie_HEADER
+#   #               - Name: SizeRestrictions_BODY
+#   #               - Name: SizeRestrictions_URIPATH
+#   #               - Name: EC2MetaDataSSRF_BODY
+#   #               - Name: EC2MetaDataSSRF_COOKIE
+#   #               - Name: EC2MetaDataSSRF_URIPATH
+#   #               - Name: EC2MetaDataSSRF_QUERYARGUMENTS
+#   #               - Name: GenericLFI_QUERYARGUMENTS
+#   #               - Name: GenericLFI_URIPATH
+#   #               - Name: GenericLFI_BODY
+#   #               - Name: RestrictedExtensions_URIPATH
+#   #               - Name: RestrictedExtensions_QUERYARGUMENTS
+#   #               - Name: GenericRFI_QUERYARGUMENTS
+#   #               - Name: GenericRFI_BODY
+#   #               - Name: GenericRFI_URIPATH
+#   #               - Name: CrossSiteScripting_COOKIE
+#   #               - Name: CrossSiteScripting_QUERYARGUMENTS
+#   #               - Name: CrossSiteScripting_BODY
+#   #               - Name: CrossSiteScripting_URIPATH
+#   #         OverrideAction:
+#   #           None: {}
+#   #         VisibilityConfig:
+#   #           CloudWatchMetricsEnabled: true
+#   #           SampledRequestsEnabled: true
+#   #           MetricName: AWS-AWSManagedRulesCommonRuleSet
+  
+#   # WebACLAssociation:
+#   #   Type: AWS::WAFv2::WebACLAssociation
+#   #   Properties:
+#   #     ResourceArn: !Ref WebAclAssociationResourceArn
+#   #     WebACLArn: !GetAtt WebAcl.Arn
