@@ -15,25 +15,22 @@ on:
       - 'terraform-test/*.tftest.hcl'
       - '.github/workflows/*.yml'
       - '.github/workflows/*.yaml'
+  workflow_call:
+    inputs:
+      enable_pr_comment:
+        description: 'Enable PR comment'
+        required: false
+        default: true
+        type: 'boolean'
 
-# jobs:
-#   test:
-#     runs-on: ubuntu-latest
-
-#     steps:
-#       - uses: actions/checkout@v3
-
-#       - run: echo "Hello, Terraform Test!"
+permissions:
+  contents: read
+  pull-requests: write
 
 jobs:
   terraform:
     name: 'Terraform'
     runs-on: ubuntu-latest
-
-#     # env:
-#     #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#     #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#     #     AWS_DEFAULT_REAGION: ${{ secrets.AWS_DEFAULT_REAGION }}
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
@@ -85,6 +82,19 @@ jobs:
     - name: Terraform test
       run: terraform test
 
+    - name: Create comment file
+      if: ${{ steps.test.outcome == 'failure' && inputs.enable_pr_comment == true }}
+      run: |
+        cat  << EOF > comment.md
+        ## Test Failed
+        The tests failed. Please check the logs for more information.
+        https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        EOF
+
+    - name: Create PR comment
+      if: ${{ steps.test.outcome == 'failure' && inputs.enable_pr_comment == true }}
+      run: |
+        gh pr comment ${{ github.event.number }} --body-file comment.md
 #       # On push to "main", build or change infrastructure according to Terraform configuration files
 #       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
 #     # - name: Terraform Apply
