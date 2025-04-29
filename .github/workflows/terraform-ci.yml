@@ -8,7 +8,13 @@ on:
       - 'terraform-test/*.tf'
       - 'terraform-test/*.tftest.hcl'
       - '.github/workflows/*.yml'
+      - '.github/workflows/*.yaml'
   pull_request:
+      paths:
+      - 'terraform-test/*.tf'
+      - 'terraform-test/*.tftest.hcl'
+      - '.github/workflows/*.yml'
+      - '.github/workflows/*.yaml'
 
 jobs:
   test:
