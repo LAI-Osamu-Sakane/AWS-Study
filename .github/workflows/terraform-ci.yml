@@ -9,13 +9,19 @@ on:
       - 'terraform-test/**/*.tftest.hcl'
       - '.github/workflows/*.yaml'
   pull_request:
-    paths:
-      - 'terraform-test/**/*.tf'
-      - 'terraform-test/**/*.tftest.hcl'
-      - '.github/workflows/*.yaml'
+    
 
-# permissions:
-#   contents: read
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - run: echo "Hello, Terraform Test!"
 
 # jobs:
 #   terraform:
@@ -74,11 +80,3 @@ on:
 
 
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - run: echo "Hello, Terraform Test!"
