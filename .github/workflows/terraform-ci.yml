@@ -1,13 +1,14 @@
 name: 'Terraform-CI'
 
 on:
-  pull_request:
+  push:
+    branches:
+      - main
     paths:
       - 'terraform-test/**/*.tf'
       - 'terraform-test/**/*.tftest.hcl'
       - '.github/workflows/*.yaml'
-  push:
-    branches: [ main ]
+  pull_request:
     paths:
       - 'terraform-test/**/*.tf'
       - 'terraform-test/**/*.tftest.hcl'
@@ -71,15 +72,7 @@ on:
 #     #   run: terraform apply -auto-approve -input=false
 
 
-# on:
-#   push:
-#     branches:
-#       - main
-#     paths:
-#       - 'terraform-test/**/*.tf'
-#       - 'terraform-test/**/*.tftest.hcl'
-#       - '.github/workflows/*.yaml'
-#   pull_request:
+
 
 jobs:
   test:
