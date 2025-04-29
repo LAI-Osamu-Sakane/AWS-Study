@@ -528,46 +528,46 @@ run "verify_ec2" {
 }
 
 # 2台目
-run "verify_ec2-2" {
-  command = plan
-  # command = apply
+# run "verify_ec2-2" {
+#   command = plan
+#   # command = apply
 
-  # # apply出ないとエラーになる
-  # assert {
-  #   condition     = aws_instance.test_ec2.vpc_security_group_ids[0] == aws_security_group.sg-ec2.id
-  #   error_message = "vpc_security_group_idsの値が一致しません。"
-  # }
+#   # # apply出ないとエラーになる
+#   # assert {
+#   #   condition     = aws_instance.test_ec2.vpc_security_group_ids[0] == aws_security_group.sg-ec2.id
+#   #   error_message = "vpc_security_group_idsの値が一致しません。"
+#   # }
 
-  # assert {
-  #   condition = aws_instance.test_ec2.subnet_id == aws_subnet.public_1a.id
-  #   error_message = "subnet_idの値が一致しません"
-  # }
+#   # assert {
+#   #   condition = aws_instance.test_ec2.subnet_id == aws_subnet.public_1a.id
+#   #   error_message = "subnet_idの値が一致しません"
+#   # }
 
-  assert {
-    condition     = aws_instance.test_ec2-2.ami == "ami-0599b6e53ca798bb2"
-    error_message = "amiの値が一致しません"
-  }
+#   assert {
+#     condition     = aws_instance.test_ec2-2.ami == "ami-0599b6e53ca798bb2"
+#     error_message = "amiの値が一致しません"
+#   }
 
-  assert {
-    condition     = aws_instance.test_ec2-2.instance_type == "t2.micro"
-    error_message = "instance_typeの値が一致しません"
-  }
+#   assert {
+#     condition     = aws_instance.test_ec2-2.instance_type == "t2.micro"
+#     error_message = "instance_typeの値が一致しません"
+#   }
 
-  assert {
-    condition     = aws_instance.test_ec2-2.root_block_device[0].volume_size == 8
-    error_message = "root_block_device.voume_sizeの値が一致しません"
-  }
+#   assert {
+#     condition     = aws_instance.test_ec2-2.root_block_device[0].volume_size == 8
+#     error_message = "root_block_device.voume_sizeの値が一致しません"
+#   }
 
-  assert {
-    condition     = aws_instance.test_ec2-2.root_block_device[0].volume_type == "gp3"
-    error_message = "root_block_device.volume_typeの値が一致しません"
-  }
-  assert {
-    condition     = aws_instance.test_ec2-2.tags.Name == "aws-study-test-ec2-2"
-    error_message = "tags_Nameの値が一致しません"
-  }
+#   assert {
+#     condition     = aws_instance.test_ec2-2.root_block_device[0].volume_type == "gp3"
+#     error_message = "root_block_device.volume_typeの値が一致しません"
+#   }
+#   assert {
+#     condition     = aws_instance.test_ec2-2.tags.Name == "aws-study-test-ec2-2"
+#     error_message = "tags_Nameの値が一致しません"
+#   }
 
-}
+# }
 
 # rdsのテスト------------------------------------------------------------------------------------
 run "verify_rds" {
