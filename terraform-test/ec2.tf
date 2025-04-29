@@ -30,7 +30,7 @@ resource "aws_instance" "test_ec2-2" {
     volume_type = "gp3"
   }
   tags = {
-    Name = "aws-study-test-ec2-2"
+    Name = "aws-study-test-ec2"
   }
 }
 
