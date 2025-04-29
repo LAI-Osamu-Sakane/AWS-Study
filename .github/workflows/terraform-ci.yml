@@ -76,9 +76,9 @@ jobs:
     - name: Terraform validate
       run: terraform validate
       
-#     # Generates an execution plan for Terraform
-#     # - name: Terraform Plan
-#     #   run: terraform plan -input=false
+    # Generates an execution plan for Terraform
+    - name: Terraform Plan
+      run: terraform plan -input=false
 
     - name: Terraform test
       run: terraform test
