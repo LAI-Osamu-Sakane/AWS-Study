@@ -16,55 +16,55 @@ on:
       - '.github/workflows/*.yml'
       - '.github/workflows/*.yaml'
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - run: echo "Hello, Terraform Test!"
-
 # jobs:
-#   terraform:
-#     name: 'Terraform'
+#   test:
 #     runs-on: ubuntu-latest
+
+#     steps:
+#       - uses: actions/checkout@v3
+
+#       - run: echo "Hello, Terraform Test!"
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
 
 #     # env:
 #     #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
 #     #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 #     #     AWS_DEFAULT_REAGION: ${{ secrets.AWS_DEFAULT_REAGION }}
 
-#     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
-#     defaults:
-#       run:
-#         working-directory: terraform-test
-#         # shell: bash
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        working-directory: terraform-test
+        # shell: bash
 
-#     steps:
-#     # Checkout the repository to the GitHub Actions runner
-#     - name: Checkout
-#       uses: actions/checkout@v4
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v4
       
 
-#     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
-#     - name: Setup Terraform
-#       # uses: hashicorp/setup-terraform@v1
-#       uses: hashicorp/setup-terraform@v3
-#       with:
-#         # cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-#         terraform_version: 1.11.3
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: Setup Terraform
+      # uses: hashicorp/setup-terraform@v1
+      uses: hashicorp/setup-terraform@v3
+      with:
+        # cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+        terraform_version: 1.11.3
 
-#     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-#     - name: Terraform Init
-#       run: terraform init
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      run: terraform init
 
-#     # Checks that all Terraform configuration files adhere to a canonical format
-#     - name: Terraform Format
-#       run: terraform fmt -check
+    # Checks that all Terraform configuration files adhere to a canonical format
+    - name: Terraform Format
+      run: terraform fmt -check
 
-#     - name: Terraform validate
-#       run: terraform validate
+    - name: Terraform validate
+      run: terraform validate
       
 #     # Generates an execution plan for Terraform
 #     # - name: Terraform Plan
