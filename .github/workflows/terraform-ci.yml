@@ -9,10 +9,6 @@ on:
       - 'terraform-test/**/*.tftest.hcl'
       - '.github/workflows/*.yaml'
   pull_request:
-    
-
-# permissions:
-#   contents: read
 
 jobs:
   test:
