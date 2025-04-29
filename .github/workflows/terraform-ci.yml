@@ -76,8 +76,8 @@ on:
     branches:
       - main
     paths:
-      - 'terraform-test/**.tf'
-      - 'terraform-test/**.tftest.hcl'
+      - 'terraform-test/**/*.tf'
+      - 'terraform-test/**/*.tftest.hcl'
       - '.github/workflows/*.yaml'
   pull_request:
 

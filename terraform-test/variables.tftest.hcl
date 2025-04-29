@@ -371,7 +371,7 @@ run "verify_sg" {
     error_message = "tags_Nameの値が一致しません"
   }
 
-  # port8080の許可
+  # port8080の許可(java用のポート)
   assert {
     condition     = aws_vpc_security_group_ingress_rule.allow-8080.from_port == 8080
     error_message = "from_portの値が一致しません"
