@@ -4,10 +4,10 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'terraform-test/**/*.tf'
-      - 'terraform-test/**/*.tftest.hcl'
-      - '.github/workflows/*.yaml'
+    # paths:
+    #   - 'terraform-test/**/*.tf'
+    #   - 'terraform-test/**/*.tftest.hcl'
+    #   - '.github/workflows/*.yaml'
   pull_request:
 
 jobs:
