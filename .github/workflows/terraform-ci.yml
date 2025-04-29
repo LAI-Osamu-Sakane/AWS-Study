@@ -85,11 +85,12 @@ jobs:
 
     - name: CommentTest
       env:
-        PR_NUMBER: ${{ github.event.number }}
+        # PR_NUMBER: ${{ github.event.number }}
+        # PR_TITLE: ${{ github.event.pull_request.title }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         echo "PRへのコメント内容をファイルに出力する" > /tmp/comment
-        echo "{PR_NUMBER}"
         gh pr comment "${PR_NUMBER}" -F /tmp/comment
 #       # On push to "main", build or change infrastructure according to Terraform configuration files
 #       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
