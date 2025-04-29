@@ -16,7 +16,7 @@ resource "aws_instance" "test_ec2" {
   }
 }
 
-resource "aws_instance" "test_ec2" {
+resource "aws_instance" "test_ec2-2" {
   ami                         = "ami-0599b6e53ca798bb2"
   instance_type               = "t2.micro"
   subnet_id                   = aws_subnet.public_1c.id
