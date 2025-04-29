@@ -1,17 +1,17 @@
 name: 'Terraform-CI'
 
-on:
-  pull_request:
-    paths:
-      - 'terraform-test/**.tf'
-      - 'terraform-test/**.tftest.hcl'
-      - '.github/workflows/*.yaml'
-  push:
-    branches: [ main ]
-    paths:
-      - 'terraform-test/**.tf'
-      - 'terraform-test/**.tftest.hcl'
-      - '.github/workflows/*.yaml'
+# on:
+#   pull_request:
+#     paths:
+#       - 'terraform-test/**.tf'
+#       - 'terraform-test/**.tftest.hcl'
+#       - '.github/workflows/*.yaml'
+#   push:
+#     branches: [ main ]
+#     paths:
+#       - 'terraform-test/**.tf'
+#       - 'terraform-test/**.tftest.hcl'
+#       - '.github/workflows/*.yaml'
 
 # permissions:
 #   contents: read
@@ -71,6 +71,15 @@ on:
 #     #   run: terraform apply -auto-approve -input=false
 
 
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'terraform-test/**.tf'
+      - 'terraform-test/**.tftest.hcl'
+      - '.github/workflows/*.yaml'
+  pull_request:
 
 jobs:
   test:
