@@ -86,6 +86,7 @@ jobs:
     - name: CommentTest
       env:
         PR_NUMBER: ${{ github.event.number }}
+        echo ${{ github.event.number }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         echo "PRへのコメント内容をファイルに出力する" > /tmp/comment
