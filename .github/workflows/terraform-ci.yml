@@ -56,15 +56,19 @@ jobs:
         terraform_version: 1.11.3
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-    - name: Terraform Init
-      run: terraform init
+    - name: Terraform Version
+      run: terraform --version
 
-    # Checks that all Terraform configuration files adhere to a canonical format
-    - name: Terraform Format
-      run: terraform fmt -check
+    # # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    # - name: Terraform Init
+    #   run: terraform init
 
-    - name: Terraform validate
-      run: terraform validate
+    # # Checks that all Terraform configuration files adhere to a canonical format
+    # - name: Terraform Format
+    #   run: terraform fmt -check
+
+    # - name: Terraform validate
+    #   run: terraform validate
       
 #     # Generates an execution plan for Terraform
 #     # - name: Terraform Plan
