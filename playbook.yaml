@@ -1,13 +1,4 @@
-- name: Create test.txt on EC2
-  hosts: ec2
-  become: false
-  tasks:
-    - name: Create test.txt in home directory
-      copy:
-        dest: "/home/ec2-user/test.txt"
-        content: "This is a test file created by Ansible via GitHub Actions.\n"
-
-- name: Install OpenJDK 21 on Amazon Linux 2023
+- name: Install OpenJDK 21 and Git on Amazon Linux 2023
   hosts: ec2
   become: true
   tasks:
@@ -23,3 +14,8 @@
           export JAVA_HOME=/usr/lib/jvm/java-21-amazon-corretto
           export PATH=$JAVA_HOME/bin:$PATH
         mode: '0755'
+
+    - name: Install git
+      yum:
+        name: git
+        state: present
