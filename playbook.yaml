@@ -71,7 +71,7 @@
     #     state: present
     - name: Copy MySQL repo RPM to EC2
       copy:
-        src: files/mysql80-community-release-el9-1.noarch.rpm
+        src: /home/runner/work/AWS-Study/AWS-Study/files/mysql80-community-release-el9-1.noarch.rpm
         dest: /tmp/mysql80-community-release.rpm
 
     - name: Install MySQL Yum Repository RPM
