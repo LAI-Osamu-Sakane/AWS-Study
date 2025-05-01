@@ -65,9 +65,18 @@
         name: '*'
         state: latest
 
-    - name: LocalInstall MySQL Yum Repository RPM
+    # - name: LocalInstall MySQL Yum Repository RPM
+    #   dnf:
+    #     name: https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm
+    #     state: present
+    - name: Copy MySQL repo RPM to EC2
+      copy:
+        src: files/mysql80-community-release-el9-1.noarch.rpm
+        dest: /tmp/mysql80-community-release.rpm
+
+    - name: Install MySQL Yum Repository RPM
       dnf:
-        name: https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm
+        name: /tmp/mysql80-community-release.rpm
         state: present
 
     - name: Import MySQL GPG key
