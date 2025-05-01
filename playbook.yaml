@@ -69,13 +69,13 @@
     #   dnf:
     #     name: https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm
     #     state: present
-    - name: Copy MySQL repo RPM to EC2
-      copy:
-        src: /home/runner/work/AWS-Study/AWS-Study/files/mysql80-community-release-el9-1.noarch.rpm
+    - name: Copy MySQL Yum Repository RPM to EC2
+      ansible.builtin.copy:
+        src: mysql80-community-release-el9-1.noarch.rpm
         dest: /tmp/mysql80-community-release.rpm
 
     - name: Install MySQL Yum Repository RPM
-      dnf:
+      ansible.builtin.dnf:
         name: /tmp/mysql80-community-release.rpm
         state: present
  
