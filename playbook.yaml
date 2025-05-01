@@ -69,19 +69,16 @@
     #   dnf:
     #     name: https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm
     #     state: present
-    # - name: Copy MySQL repo RPM to EC2
-    #   copy:
-    #     src: /home/runner/work/AWS-Study/AWS-Study/files/mysql80-community-release-el9-1.noarch.rpm
-    #     dest: /tmp/mysql80-community-release.rpm
+    - name: Copy MySQL repo RPM to EC2
+      copy:
+        src: /home/runner/work/AWS-Study/AWS-Study/files/mysql80-community-release-el9-1.noarch.rpm
+        dest: /tmp/mysql80-community-release.rpm
 
-    # - name: Install MySQL Yum Repository RPM
-    #   dnf:
-    #     name: /tmp/mysql80-community-release.rpm
-    #     state: present
-    - name: Install MySQL Repository RPM from URL
+    - name: Install MySQL Yum Repository RPM
       dnf:
-        name: https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm
+        name: /tmp/mysql80-community-release.rpm
         state: present
+ 
 
     - name: Import MySQL GPG key
       rpm_key:
