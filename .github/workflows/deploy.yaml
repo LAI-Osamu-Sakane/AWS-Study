@@ -23,4 +23,4 @@ jobs:
         ssh-private-key: ${{ secrets.AWS_EC2_SSH_KEY }}
 
     - name: Run Ansible Playbook
-      run: ansible-playbook playbook.yaml
+      run: ansible-playbook ansible-test/playbook.yaml
