@@ -65,7 +65,7 @@
         name: '*'
         state: latest
 
-    - name: Install MySQL Yum Repository RPM
+    - name: LocalInstall MySQL Yum Repository RPM
       dnf:
         name: https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm
         state: present
