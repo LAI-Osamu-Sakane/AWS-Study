@@ -86,7 +86,7 @@
     - name: Check MySQL connection with password
       community.mysql.mysql_info:
         login_user: root
-        login_password: "{{ mysql_root_password }}"
+        login_password: "rootroot"
 
     - name: Create a database called myapp_db
       community.mysql.mysql_db:
