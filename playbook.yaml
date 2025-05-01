@@ -87,6 +87,7 @@
       community.mysql.mysql_info:
         login_user: root
         login_password: "rootroot"
+        login_host: "aws-study-test-awsstudyrds-q9e8lntsnewm.c9w2ki24y6sz.ap-northeast-1.rds.amazonaws.com"
 
     - name: Create a database called myapp_db
       community.mysql.mysql_db:
@@ -94,3 +95,4 @@
         state: present
         login_user: root
         login_password: "rootroot"
+        login_host: "aws-study-test-awsstudyrds-q9e8lntsnewm.c9w2ki24y6sz.ap-northeast-1.rds.amazonaws.com"
