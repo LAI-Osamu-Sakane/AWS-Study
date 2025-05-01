@@ -25,13 +25,17 @@
         state: present
         key: https://repo.mysql.com/RPM-GPG-KEY-mysql-2023
 
-    - name: Download MySQL Yum Repository RPM (Retry on failure)
-      get_url:
-        url: https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm
-        dest: /tmp/mysql80-community-release.rpm
-        retries: 3
-        delay: 5
-        timeout: 30
+    - name: Download MySQL Yum Repository RPM with retries
+      block:
+        - name: Try to download MySQL repo RPM
+          get_url:
+            url: https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm
+            dest: /tmp/mysql80-community-release.rpm
+            timeout: 30
+          register: result
+          until: result is succeeded
+          retries: 3
+          delay: 5
 
     - name: Install MySQL Yum Repository
       yum:
