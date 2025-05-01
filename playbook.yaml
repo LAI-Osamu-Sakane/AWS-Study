@@ -53,5 +53,5 @@
     #     state: present
     - name: Install MySQL 8.0 client from default Amazon Linux repo
       dnf:
-        name: mysql
+        name: mysql-client
         state: present
