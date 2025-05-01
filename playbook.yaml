@@ -78,8 +78,8 @@
     #   dnf:
     #     name: /tmp/mysql80-community-release.rpm
     #     state: present
-    - name: Install MySQL Yum Repository RPM from URL
-      ansible.builtin.dnf:
+    - name: Install MySQL Repository RPM from URL
+      dnf:
         name: https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm
         state: present
 
