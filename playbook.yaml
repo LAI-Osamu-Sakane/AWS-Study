@@ -37,17 +37,21 @@
           retries: 3
           delay: 5
 
-    - name: Install MySQL Yum Repository
-      yum:
-        name: /tmp/mysql80-community-release.rpm
-        state: present
+    # - name: Install MySQL Yum Repository
+    #   yum:
+    #     name: /tmp/mysql80-community-release.rpm
+    #     state: present
 
-    - name: Disable default MySQL module (to avoid conflict)
-      command: dnf module disable mysql -y
-      args:
-        warn: false
+    # - name: Disable default MySQL module (to avoid conflict)
+    #   command: dnf module disable mysql -y
+    #   args:
+    #     warn: false
 
-    - name: Install MySQL client only
-      yum:
-        name: mysql-community-client
+    # - name: Install MySQL client only
+    #   yum:
+    #     name: mysql-community-client
+    #     state: present
+    - name: Install MySQL 8.0 client from default Amazon Linux repo
+      dnf:
+        name: mysql
         state: present
