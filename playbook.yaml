@@ -6,3 +6,20 @@
       copy:
         dest: "/home/ec2-user/test.txt"
         content: "This is a test file created by Ansible via GitHub Actions.\n"
+
+- name: Install OpenJDK 21 on Amazon Linux 2023
+  hosts: ec2
+  become: true
+  tasks:
+    - name: Install OpenJDK 21 (Amazon Corretto)
+      yum:
+        name: java-21-amazon-corretto-devel
+        state: present
+
+    - name: Set JAVA_HOME and update PATH
+      copy:
+        dest: /etc/profile.d/java.sh
+        content: |
+          export JAVA_HOME=/usr/lib/jvm/java-21-amazon-corretto
+          export PATH=$JAVA_HOME/bin:$PATH
+        mode: '0755'
