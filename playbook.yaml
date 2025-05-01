@@ -58,9 +58,9 @@
           - python3-pip
         state: present
 
-    - name: Install mysqlclient for Ansible MySQL modules
-      ansible.builtin.pip:
-        name: mysqlclient
+    # - name: Install mysqlclient for Ansible MySQL modules
+    #   ansible.builtin.pip:
+    #     name: mysqlclient
 
     - name: Check MySQL connection with root user
       community.mysql.mysql_info:
