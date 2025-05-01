@@ -56,38 +56,28 @@
     #     name: mysql-client
     #     state: present
 
-- name: Set up MySQL 8.0 client using official repo on Amazon Linux 2023
+- name: Install MySQL 8.0 client on Amazon Linux 2023
   hosts: ec2
   become: true
   tasks:
+    - name: Update all packages
+      yum:
+        name: '*'
+        state: latest
+
+    - name: Install MySQL Yum Repository RPM
+      dnf:
+        name: https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm
+        state: present
+
     - name: Import MySQL GPG key
       rpm_key:
         state: present
         key: https://repo.mysql.com/RPM-GPG-KEY-mysql-2023
 
-    - name: Download MySQL Yum Repository RPM with retries
-      block:
-        - name: Try to download MySQL repo RPM
-          get_url:
-            url: https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm
-            dest: /tmp/mysql80-community-release.rpm
-            timeout: 30
-          register: result
-          until: result is succeeded
-          retries: 3
-          delay: 5
-
-    - name: Install MySQL Yum Repository
-      yum:
-        name: /tmp/mysql80-community-release.rpm
-        state: present
-
-    - name: Disable default MySQL module
-      command: dnf module disable mysql -y
-      args:
-        warn: false
-
-    - name: Install MySQL 8.0 client
-      yum:
-        name: mysql-community-client
+    - name: Install MySQL 8.0 client and related packages
+      dnf:
+        name:
+          - mysql
+          - mysql-community-client
         state: present
