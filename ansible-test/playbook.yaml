@@ -4,5 +4,5 @@
   tasks:
     - name: Create test.txt in home directory
       copy:
-        dest: "~/test.txt"
+        dest: "/home/ec2-user/test.txt"
         content: "This is a test file created by Ansible via GitHub Actions.\n"
