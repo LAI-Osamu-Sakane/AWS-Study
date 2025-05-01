@@ -51,16 +51,31 @@
           - mysql-community-client
         state: present
 
-    - name: Install Python MySQL dependencies
+    - name: Install Python3, pip, and MySQL build dependencies
       ansible.builtin.dnf:
         name:
           - python3
           - python3-pip
+          - gcc
+          - python3-devel
+          - mysql-devel
         state: present
+        update_cache: yes
 
-    - name: Install mysqlclient for Ansible MySQL modules
+    - name: Install mysqlclient using pip
       ansible.builtin.pip:
         name: mysqlclient
+
+    # - name: Install Python MySQL dependencies
+    #   ansible.builtin.dnf:
+    #     name:
+    #       - python3
+    #       - python3-pip
+    #     state: present
+
+    # - name: Install mysqlclient for Ansible MySQL modules
+    #   ansible.builtin.pip:
+    #     name: mysqlclient
 
     - name: Check MySQL connection with root user
       community.mysql.mysql_info:
