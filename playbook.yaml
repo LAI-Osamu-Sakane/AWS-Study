@@ -19,3 +19,29 @@
       yum:
         name: git
         state: present
+
+    - name: Download MySQL 8.0 Yum Repository RPM
+      get_url:
+        url: https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm
+        dest: /tmp/mysql80-community-release.rpm
+
+    - name: Install MySQL Yum Repository
+      yum:
+        name: /tmp/mysql80-community-release.rpm
+        state: present
+
+    - name: Enable MySQL 8.0 Module
+      command: dnf module disable mysql -y
+      args:
+        warn: false
+
+    - name: Install MySQL 8.0 Server
+      yum:
+        name: mysql-community-server
+        state: present
+
+    - name: Enable and start mysqld service
+      systemd:
+        name: mysqld
+        enabled: yes
+        state: started
