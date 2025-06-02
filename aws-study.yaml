@@ -256,6 +256,7 @@ Resources:
       RouteTableId: !Ref RDSPrivateRouteTable
       SubnetId: !Ref RDSPrivateSubnet1c
 
+  # インバウンドなしのセキュリティグループの作成
   NoIngressSecurityGroup:
       Type: AWS::EC2::SecurityGroup
       Properties:

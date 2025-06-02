@@ -7,7 +7,7 @@ Resources:
     Type: AWS::EC2::VPC # 作成するもの（VPCを作成)
     Properties:
       # IPv4のCidrBlock
-      CidrBlock: 10.0.0.0/16
+      CidrBlock: 10.1.0.0/16
       # 名前解決のためtrueに指定
       EnableDnsSupport: true # DNS解決を有効か
       EnableDnsHostnames: true # DNSホスト名を有効化
@@ -38,13 +38,402 @@ Resources:
       VpcId: !Ref AWSStudyVPC
 
   # Subnet作成
+  # 1つ目のpublic subnetの作成
   AWSStudySubnet1a: # ID名
-    Type: AWS::EC2::Subnet
+    Type: AWS::EC2::Subnet # 作成するもの（Subnetを作成)
     Properties:
-      CidrBlock: 10.2.0.0/24
-      VpcId: !Ref VPC
+      # IPV4のCidrBlock
+      CidrBlock: 10.1.1.0/24
+      # 作成する場所（vpc）の指定
+      VpcId: !Ref AWSStudyVPC
+      # AZ（AvailabilityZone）の指定
       AvailabilityZone: ap-northeast-1a
+      # インスタンスが起動時にパブリック IP アドレスを設定
       MapPublicIpOnLaunch: true
+      # インスタンスのnameの欄に表示される
       Tags:
         - Key: Name
-          Value: aws-study-subnet1a
+          Value: aws-study-subnet-public1-ap-northeast-1a
+
+  # 2つ目のpublic subnetの作成
+  PublicSubnet1c: # ID名
+    Type: AWS::EC2::Subnet # 作成するもの（Subnetを作成)
+    Properties:
+      # IPV4のCidrBlock
+      CidrBlock: 10.1.2.0/24
+      # 作成する場所（vpc）の指定
+      VpcId: !Ref AWSStudyVPC
+      # AZ（AvailabilityZone）の指定
+      AvailabilityZone: ap-northeast-1c
+      # インスタンスが起動時にパブリック IP アドレスを設定
+      MapPublicIpOnLaunch: true
+      # インスタンスのnameの欄に表示される
+      Tags:
+        - Key: Name
+          Value: aws-study-subnet-public2-ap-northeast-1c
+
+  #1つ目のプライベートサブネット
+  PrivateSubnet1a: # ID名
+    Type: AWS::EC2::Subnet # 作成するもの（Subnetを作成)
+    Properties:
+      # IPV4のCidrBlock
+      CidrBlock: 10.1.3.0/24
+      # 作成する場所（vpc）の指定
+      VpcId: !Ref AWSstudyvpc
+      # AZ（AvailabilityZone）の指定
+      AvailabilityZone: ap-northeast-1a
+      # インスタンスが起動時にパブリック IP アドレスを設定
+      MapPublicIpOnLaunch: false
+      # インスタンスのnameの欄に表示される
+      Tags:
+        - Key: Name
+          Value: aws-study-subnet-private1-ap-northeast-1a
+
+  # 2つ目のプライベートサブネット
+  PrivateSubnet1c: # ID名
+    Type: AWS::EC2::Subnet # 作成するもの（Subnetを作成)
+    Properties:
+      # IPV4のCidrBlock
+      CidrBlock: 10.1.4.0/24
+      # 作成する場所（vpc）の指定
+      VpcId: !Ref AWSstudyvpc
+      # AZ（AvailabilityZone）の指定
+      AvailabilityZone: ap-northeast-1c
+      # インスタンスが起動時にパブリック IP アドレスを設定
+      MapPublicIpOnLaunch: false
+      # インスタンスのnameの欄に表示される
+      Tags:
+        - Key: Name
+          Value: aws-study-subnet-private2-ap-northeast-1c
+
+  #1つ目のRDS用プライベートサブネット
+  RDSPrivateSubnet1a: # ID名
+    Type: AWS::EC2::Subnet # 作成するもの（Subnetを作成)
+    Properties:
+      # IPV4のCidrBlock
+      CidrBlock: 10.1.10.0/24
+      # 作成する場所（vpc）の指定
+      VpcId: !Ref AWSstudyvpc
+      # AZ（AvailabilityZone）の指定
+      AvailabilityZone: ap-northeast-1a
+      # インスタンスが起動時にパブリック IP アドレスを設定
+      MapPublicIpOnLaunch: false
+      # インスタンスのnameの欄に表示される
+      Tags:
+        - Key: Name
+          Value: aws-study-rds-private-ap-northeast-1a
+
+  # 2つ目のRDS用プライベートサブネット
+  RDSPrivateSubnet1c: # ID名
+    Type: AWS::EC2::Subnet # 作成するもの（Subnetを作成)
+    Properties:
+      # IPV4のCidrBlock
+      CidrBlock: 10.1.11.0/24
+      # 作成する場所（vpc）の指定
+      VpcId: !Ref AWSstudyvpc
+      # AZ（AvailabilityZone）の指定
+      AvailabilityZone: ap-northeast-1c
+      # インスタンスが起動時にパブリック IP アドレスを設定
+      MapPublicIpOnLaunch: false
+      # インスタンスのnameの欄に表示される
+      Tags:
+        - Key: Name
+          Value: aws-study-rds-private-ap-northeast-1c
+
+  # RouteTable
+  # RouteTableをVPCに作成
+  # パブリック用ルートテーブル
+  PublicRouteTable: # ID名
+    Type: AWS::EC2::RouteTable # 作成するもの（RouteTableを作成)
+    Properties:
+      # 作成する場所（vpc）の指定
+      VpcId: !Ref AWSstudyvpc
+      # インスタンスのnameの欄に表示される
+      Tags:
+        - Key: Name
+          Value: aws-study-rtb-public
+
+  # 1つ目のプライベートサブネット用ルートテーブル
+  PrivateRouteTable1: # ID名
+      Type: AWS::EC2::RouteTable # 作成するもの（RouteTableを作成)
+      Properties:
+        # 作成する場所（vpc）の指定
+        VpcId: !Ref AWSstudyvpc
+        # インスタンスのnameの欄に表示される
+        Tags:
+          - Key: Name
+            Value: aws-study-rtb-private1-ap-northeast-1a
+
+  # 2つ目のプライベートサブネット用ルートテーブル
+  PrivateRouteTable2: # ID名
+      Type: AWS::EC2::RouteTable # 作成するもの（RouteTableを作成)
+      Properties:
+        # 作成する場所（vpc）の指定
+        VpcId: !Ref AWSstudyvpc
+        # インスタンスのnameの欄に表示される
+        Tags:
+          - Key: Name
+            Value: aws-study-rtb-private2-ap-northeast-1c
+
+  # RDS用ルートテーブル
+  RDSPrivateRouteTable: # ID名
+      Type: AWS::EC2::RouteTable # 作成するもの（RouteTableを作成)
+      Properties:
+        # 作成する場所（vpc）の指定
+        VpcId: !Ref AWSstudyvpc
+        # インスタンスのnameの欄に表示される
+        Tags:
+          - Key: Name
+            Value: aws-study-rds-rtb-private
+
+  # 外部に出るためのRouteTableの設定
+  DefaultPublicRoute: # ID名
+      Type: AWS::EC2::Route # 作成するもの（Routeを作成)
+      # IGWがvpcにアタッチ（接続）後に作成
+      DependsOn: InternetGatewayAttachment
+      Properties:
+        # 参照するRouteTableの指定
+        RouteTableId: !Ref PublicRouteTable
+        # 送信先のCiderBlock（どこでも処理をする）
+        DestinationCidrBlock: 0.0.0.0/0
+        # パケット送信時の宛先（IGW）を指定
+        GatewayId: !Ref InternetGateway
+
+  # 各サブネットとルートテーブルを関連付け
+  # 1つ目のパブリックサブネット
+  PublicSubnet1aRouteTableAssociation: # ID名
+      Type: AWS::EC2::SubnetRouteTableAssociation # 作成するもの（SubnetRouteTableAssociationを作成)
+      Properties:
+        # 関連付けるRouteTableを指定
+        RouteTableId: !Ref PublicRouteTable
+        # 関連付けるSubnetを指定
+        SubnetId: !Ref PublicSubnet1a
+
+  # 2つ目のパブリックサブネット
+  PublicSubnet1cRouteTableAssociation: # ID名
+      Type: AWS::EC2::SubnetRouteTableAssociation # 作成するもの（SubnetRouteTableAssociationを作成)
+      Properties:
+        # 関連付けるRouteTableを指定
+        RouteTableId: !Ref PublicRouteTable
+        # 関連付けるSubnetを指定
+        SubnetId: !Ref PublicSubnet1c
+
+  # 1つ目のプライベートサブネットとルートテーブルを関連付け
+  PrivateSubnet1aRouteTableAssociation: # ID名
+    Type: AWS::EC2::SubnetRouteTableAssociation # 作成するもの（SubnetRouteTableAssociationを作成)
+    Properties:
+      # 関連付けるRouteTableを指定
+      RouteTableId: !Ref PrivateRouteTable1
+      # 関連付けるSubnetを指定
+      SubnetId: !Ref PrivateSubnet1a
+
+  # 2つ目のプライベートサブネットとルートテーブルを関連付け
+  PrivateSubnet1cRouteTableAssociation: # ID名
+    Type: AWS::EC2::SubnetRouteTableAssociation # 作成するもの（SubnetRouteTableAssociationを作成)
+    Properties:
+      # 関連付けるRouteTableを指定
+      RouteTableId: !Ref PrivateRouteTable2
+      # 関連付けるSubnetを指定
+      SubnetId: !Ref PrivateSubnet1c
+
+  # 1つ目RDS用のプライベートサブネットとルートテーブルを関連付け
+  RDSPrivateSubnet1cRouteTableAssociation1: # ID名
+    Type: AWS::EC2::SubnetRouteTableAssociation # 作成するもの（SubnetRouteTableAssociationを作成)
+    Properties:
+      # 関連付けるRouteTableを指定
+      RouteTableId: !Ref RDSPrivateRouteTable
+      # 関連付けるSubnetを指定
+      SubnetId: !Ref RDSPrivateSubnet1a
+
+  # 2つ目RDS用のプライベートサブネットとルートテーブルを関連付け
+  RDSPrivateSubnet1cRouteTableAssociation2: # ID名
+    Type: AWS::EC2::SubnetRouteTableAssociation # 作成するもの（SubnetRouteTableAssociationを作成)
+    Properties:
+      # 関連付けるRouteTableを指定
+      RouteTableId: !Ref RDSPrivateRouteTable
+      # 関連付けるSubnetを指定
+      SubnetId: !Ref RDSPrivateSubnet1c
+
+  # インバウンドなしのセキュリティグループの作成
+  NoIngressSecurityGroup: # ID名
+      Type: AWS::EC2::SecurityGroup # 作成するもの（SecurityGroupを作成)
+      Properties:
+        # セキュリティグループ名
+        GroupName: "aws-study-sg"
+        # セキュリティグループの説明
+        GroupDescription: "Security group with no ingress rule"
+        # 作成する場所（vpc）の指定
+        VpcId: !Ref AWSstudyvpc
+
+  # SecurityGroup
+  #Ec2用のセキュリティグループ
+  AWSstudysgEC2: # ID名
+    Type: AWS::EC2::SecurityGroup # 作成するもの（SecurityGroupを作成)
+    Properties:
+      # セキュリティグループの説明
+      GroupDescription: AWS-study-SG-EC2
+      # 作成する場所（vpc）の指定
+      VpcId: !Ref AWSstudyvpc
+      # セキュリティ グループに関連付けられた送信ルール(インバウンド)
+      SecurityGroupIngress:
+        # 今回使用する4種類はすべてIpProtocolはtcpを使用
+        # SSH
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        # HTTP
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        # HTTPS
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+        # カスタムTCP
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: 0.0.0.0/0
+      # セキュリティ グループに関連付けられた受信ルール(アウトバウンド)
+      # すべてのプロトコルを指定する場合は-1を指定
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+      # インスタンスのnameの欄に表示される
+      Tags:
+        - Key: Name
+          Value: AWS-study-SG-EC2
+
+  #RDS用のセキュリティグループ
+  AWSstudysgRDS: # ID名
+    Type: AWS::EC2::SecurityGroup # 作成するもの（SecurityGroupを作成)
+    Properties:
+      # セキュリティグループの説明
+      GroupDescription: AWS-study-SG-RDS
+      # 作成する場所（vpc）の指定
+      VpcId: !Ref AWSstudyvpc
+      # セキュリティ グループに関連付けられた送信ルール(インバウンド)
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          SourceSecurityGroupId:  !Ref AWSstudysgEC2
+      # セキュリティ グループに関連付けられた受信ルール(アウトバウンド)
+      # すべてのプロトコルを指定する場合は-1を指定
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+      # インスタンスのnameの欄に表示される
+      Tags:
+        - Key: Name
+          Value: AWS-study-SG-RDS
+
+  # EC2 Instance
+  # EC2インスタンスの作成
+  AWSstudyEC2: # ID名
+    Type: AWS::EC2::Instance # 作成するもの（EC2 Instanceを作成)
+    Properties:
+      # Amazon Linux 2023 のAMI
+      ImageId: !Sub "resolve:ssm:/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64"
+      # インスタンスタイプ
+      InstanceType: t2.micro
+      # 作成場所（public subnet)の指定
+      SubnetId: !Ref PublicSubnet1a
+      # テナンシー
+      Tenancy: "default"
+      # 終了保護の有効化
+      DisableApiTermination: false
+      # シャットダウンした際の動作（停止）
+      InstanceInitiatedShutdownBehavior: stop
+      # SSH接続で使用するキーペア名の指定
+      KeyName: AWSServ
+      # CloudWatchの詳細モニタリング
+      Monitoring: false
+      # 使用するセキュリティグループの指定
+      SecurityGroupIds:
+        - !Ref AWSstudysgEC2
+      # インスタンスのnameの欄に表示される
+      Tags:
+        - Key: Name
+          Value: AWS-study-EC2
+
+  # RDS
+  # RDS データベースの作成
+  AWSstudyRDS: # ID名
+    Type: AWS::RDS::DBInstance # 作成するもの（RDS DBInstanceを作成)
+    Properties:
+      # 使用するデータベースエンジン
+      Engine: MySQL
+      # 使用するデータベースエンジンのバージョン
+      EngineVersion: 8.0.41
+      # 使用するデータベースエンジンのライセンスモデル
+      LicenseModel: general-public-license
+      # 使用port番号（mysqlは3306が基本）
+      Port: 3306
+      # DBインスタンスクラスの指定
+      DBInstanceClass: db.t4g.micro
+      # メジャーバージョンは勝手にアップデートすると危険なのでfalse
+      AllowMajorVersionUpgrade: false
+      # マイナーバージョンは自動アップデートする
+      AutoMinorVersionUpgrade: true
+      # ストレージの割り当て
+      AllocatedStorage: 20
+      # ストレージタイプ（gp3は有料なのでgp2）
+      StorageType: gp2
+      # バックアップ保存日数
+      BackupRetentionPeriod: 1
+      # myslqのユーザー名
+      MasterUsername: root
+      # myslqのパスワード
+      MasterUserPassword: rootroot
+      # バックアップの時間
+      PreferredBackupWindow: 21:00-22:00
+      # メンテナンスの日時
+      PreferredMaintenanceWindow: sun:22:00-sun:23:00
+      # 作成する初期データベース名
+      DBName: awsstudy
+      # DBサブネットグループの指定
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      # セキュリティグループの指定
+      VPCSecurityGroups:
+        - !Ref AWSstudysgRDS
+      # インスタンスのnameの欄に表示される
+      Tags:
+        - Key: Name
+          Value: AWS-study-RDS
+
+  # DBSubnetGroup
+  # DBSubnetGroupの作成
+  DBSubnetGroup: # ID名
+    Type: AWS::RDS::DBSubnetGroup # 作成するもの（DBSubnetGroupを作成)
+    Properties:
+      # DBSubnetGroupの説明
+      DBSubnetGroupDescription: Created from the RDS 
+      # DBSubnetGroupの名前
+      DBSubnetGroupName: rds-subnet-group
+      # DBSubnetGroupに属するのSubnetの指定
+      SubnetIds:
+           - !Ref RDSPrivateSubnet1a
+           - !Ref RDSPrivateSubnet1c
+
+  # ELB
+  # ELBの作成
+  AWSstudyELB: # ID名
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer # 作成するもの（LoadBalancerを作成)
+    Properties:
+      # ELBの名前
+      Name: "AWS-study-ELB"
+      # 設定するSubnetの指定
+      Subnets:
+        - !Ref PublicSubnet1a
+        - !Ref PublicSubnet1c
+      # 使用するセキュリティグループの指定
+      SecurityGroups:
+        - !Ref AWSstudysgEC2
+      # インスタンスのnameの欄に表示される
+      Tags:
+        - Key: Name
+          Value: AWS-study-ELB
