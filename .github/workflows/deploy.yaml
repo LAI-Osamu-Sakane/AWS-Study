@@ -1,26 +1,26 @@
-name: Deploy test.txt to EC2 using Ansible
+# name: Deploy test.txt to EC2 using Ansible
 
-on:
-  push:
-    branches: [ main ]
+# on:
+#   push:
+#     branches: [ main ]
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+#     steps:
+#     - name: Checkout code
+#       uses: actions/checkout@v3
 
-    - name: Install Ansible
-      run: |
-        sudo apt update
-        sudo apt install -y ansible
+#     - name: Install Ansible
+#       run: |
+#         sudo apt update
+#         sudo apt install -y ansible
 
-    - name: Set up SSH key
-      uses: webfactory/ssh-agent@v0.7.0
-      with:
-        ssh-private-key: ${{ secrets.AWS_EC2_SSH_KEY }}
+#     - name: Set up SSH key
+#       uses: webfactory/ssh-agent@v0.7.0
+#       with:
+#         ssh-private-key: ${{ secrets.AWS_EC2_SSH_KEY }}
 
-    - name: Run Ansible Playbook
-      run: ansible-playbook playbook.yaml
+#     - name: Run Ansible Playbook
+#       run: ansible-playbook playbook.yaml
