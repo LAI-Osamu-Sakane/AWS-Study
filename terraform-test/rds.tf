@@ -1,9 +1,9 @@
 # # RDS
 
-# resource "aws_db_subnet_group" "rds-study-test-subnet" {
-#   name       = "rds-private-subnet"
-#   subnet_ids = [aws_subnet.rds_prv_1a.id, aws_subnet.rds_prv_1c.id]
-# }
+resource "aws_db_subnet_group" "rds-study-test-subnet" {
+  name       = "rds-private-subnet"
+  subnet_ids = [aws_subnet.rds_prv_1a.id, aws_subnet.rds_prv_1c.id]
+}
 
 resource "aws_db_instance" "test-rds" {
   identifier                  = "test-rds"
