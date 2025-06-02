@@ -1,9 +1,9 @@
 # # RDS
 
-resource "aws_db_subnet_group" "rds-study-test-subnet" {
-  name       = "rds-private-subnet"
-  subnet_ids = [aws_subnet.rds_prv_1a.id, aws_subnet.rds_prv_1c.id]
-}
+# resource "aws_db_subnet_group" "rds-study-test-subnet" {
+#   name       = "rds-private-subnet"
+#   subnet_ids = [aws_subnet.rds_prv_1a.id, aws_subnet.rds_prv_1c.id]
+# }
 
 resource "aws_db_instance" "test-rds" {
   identifier                  = "test-rds"
@@ -24,7 +24,7 @@ resource "aws_db_instance" "test-rds" {
   username                    = "root"
   password                    = "rootroot"
   vpc_security_group_ids      = [aws_security_group.sg-rds.id]
-  # db_subnet_group_name        = aws_db_subnet_group.rds-study-test-subnet.name
+  db_subnet_group_name        = aws_db_subnet_group.rds-study-test-subnet.name
   # db_subnet_group_name = "rds-private-subnet"
   skip_final_snapshot = true
 }
