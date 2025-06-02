@@ -36,7 +36,7 @@ jobs:
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
       run:
-        working-directory: aws-study-terraform
+        working-directory: terraform-test
         # shell: bash
 
     steps:
@@ -61,8 +61,8 @@ jobs:
     
     - uses: aws-actions/configure-aws-credentials@v4
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID2 }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY2 }}
         aws-region: ap-northeast-1
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
