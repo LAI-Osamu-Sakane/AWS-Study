@@ -1,8 +1,118 @@
-- name: Create test.txt on EC2
+- name: Install OpenJDK 21 and Git on Amazon Linux 2023
   hosts: ec2
-  become: false
+  become: true
   tasks:
-    - name: Create test.txt in home directory
+    - name: Install OpenJDK 21 (Amazon Corretto)
+      yum:
+        name: java-21-amazon-corretto-devel
+        state: present
+
+    - name: Set JAVA_HOME and update PATH
       copy:
-        dest: "/home/ec2-user/test.txt"
-        content: "This is a test file created by Ansible via GitHub Actions.\n"
+        dest: /etc/profile.d/java.sh
+        content: |
+          export JAVA_HOME=/usr/lib/jvm/java-21-amazon-corretto
+          export PATH=$JAVA_HOME/bin:$PATH
+        mode: '0755'
+
+    - name: Install git
+      yum:
+        name: git
+        state: present
+
+- name: Install MySQL 8.0 client on Amazon Linux 2023
+  hosts: ec2
+  become: true
+  tasks:
+    - name: Update all packages
+      yum:
+        name: '*'
+        state: latest
+
+    - name: Copy MySQL Yum Repository RPM to EC2
+      ansible.builtin.copy:
+        src: mysql80-community-release-el9-1.noarch.rpm
+        dest: /tmp/mysql80-community-release.rpm
+
+    - name: Install MySQL Yum Repository RPM
+      ansible.builtin.dnf:
+        name: /tmp/mysql80-community-release.rpm
+        state: present
+
+    - name: Import MySQL GPG key
+      rpm_key:
+        state: present
+        key: https://repo.mysql.com/RPM-GPG-KEY-mysql-2023
+
+    - name: Install MySQL 8.0 client and related packages
+      dnf:
+        name:
+          - mysql
+          - mysql-community-client
+        state: present
+
+    - name: Install Python3, pip, and MySQL build dependencies
+      ansible.builtin.dnf:
+        name:
+          - python3
+          - python3-pip
+          - gcc
+          - python3-devel
+          - mysql-devel
+        state: present
+        update_cache: yes
+
+    - name: Install mysqlclient using pip
+      ansible.builtin.pip:
+        name: mysqlclient
+
+    # - name: Install Python MySQL dependencies
+    #   ansible.builtin.dnf:
+    #     name:
+    #       - python3
+    #       - python3-pip
+    #     state: present
+
+    # - name: Install mysqlclient for Ansible MySQL modules
+    #   ansible.builtin.pip:
+    #     name: mysqlclient
+
+    - name: Check MySQL connection with root user
+      community.mysql.mysql_info:
+        login_user: root
+        login_password: "rootroot"
+        login_host: "aws-study-test-awsstudyrds-q9e8lntsnewm.c9w2ki24y6sz.ap-northeast-1.rds.amazonaws.com"
+
+    - name: Check MySQL connection with password
+      community.mysql.mysql_info:
+        login_user: root
+        login_password: "rootroot"
+        login_host: "aws-study-test-awsstudyrds-q9e8lntsnewm.c9w2ki24y6sz.ap-northeast-1.rds.amazonaws.com"
+
+    - name: Create a database called StudentManagement
+      community.mysql.mysql_db:
+        name: StudentManagement
+        state: present
+        login_user: root
+        login_password: "rootroot"
+        login_host: "aws-study-test-awsstudyrds-q9e8lntsnewm.c9w2ki24y6sz.ap-northeast-1.rds.amazonaws.com"
+
+    - name: Create students table in the database
+      community.mysql.mysql_query:
+        login_user: root
+        login_password: "rootroot"
+        login_host: "aws-study-test-awsstudyrds-q9e8lntsnewm.c9w2ki24y6sz.ap-northeast-1.rds.amazonaws.com"
+        login_db: StudentManagement  # ←作成済みのDB名に置き換えてください
+        query: |
+          CREATE TABLE IF NOT EXISTS students (
+            studentId INT PRIMARY KEY AUTO_INCREMENT,
+            name VARCHAR(50) NOT NULL,
+            kana VARCHAR(50) NOT NULL,
+            nickname VARCHAR(50),
+            mail VARCHAR(50) NOT NULL,
+            area VARCHAR(50),
+            age INT,
+            sex VARCHAR(10),
+            remark TEXT,
+            is_Deleted BOOLEAN
+          );
