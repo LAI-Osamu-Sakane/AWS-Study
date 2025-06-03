@@ -2,6 +2,10 @@
   hosts: ec2
   become: true
   tasks:
+    - name: Wait for SSH
+      ansible.builtin.wait_for_connection:
+        timeout: 300
+        
     - name: Install OpenJDK 21 (Amazon Corretto)
       yum:
         name: java-21-amazon-corretto-devel

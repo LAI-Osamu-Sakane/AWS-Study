@@ -27,5 +27,11 @@ resource "aws_db_instance" "test-rds" {
   db_subnet_group_name        = aws_db_subnet_group.rds-study-test-subnet.name
   # db_subnet_group_name = "rds-private-subnet"
   skip_final_snapshot = true
+  depends_on = [
+    aws_db_subnet_group.my_db_subnet_group
+  ]
+  tags = {
+    Name = "aws-study-test-rds"
+  }
 }
 
