@@ -24,7 +24,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow-http" {
   # プロトコル指定
   ip_protocol = "tcp"
   # VPCのCidrBlock
-  cidr_ipv4 = aws_vpc.test_vpc.cidr_block
+  cidr_ipv4 = "0.0.0.0/0"
   # Security GroupのID指定
   security_group_id = aws_security_group.sg-ec2.id
   # タグで名前（インスタンスのname欄に表示）を指定
@@ -42,7 +42,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow-https" {
   # プロトコル指定
   ip_protocol = "tcp"
   # VPCのCidrBlock
-  cidr_ipv4 = aws_vpc.test_vpc.cidr_block
+  cidr_ipv4 = "0.0.0.0/0"
   # Security GroupのID指定
   security_group_id = aws_security_group.sg-ec2.id
   # タグで名前（インスタンスのname欄に表示）を指定
@@ -61,7 +61,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow-ssh" {
   # プロトコル指定
   ip_protocol = "tcp"
   # VPCのCidrBlock
-  cidr_ipv4 = aws_vpc.test_vpc.cidr_block
+  cidr_ipv4 = "0.0.0.0/0"
   # Security GroupのID指定
   security_group_id = aws_security_group.sg-ec2.id
   # タグで名前（インスタンスのname欄に表示）を指定
@@ -80,7 +80,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow-8080" {
   # プロトコル指定
   ip_protocol = "tcp"
   # VPCのCidrBlock
-  cidr_ipv4 = aws_vpc.test_vpc.cidr_block
+  cidr_ipv4 = "0.0.0.0/0"
   # Security GroupのID指定
   security_group_id = aws_security_group.sg-ec2.id
   # タグで名前（インスタンスのname欄に表示）を指定
