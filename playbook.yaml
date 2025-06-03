@@ -95,28 +95,28 @@
       community.mysql.mysql_info:
         login_user: root
         login_password: "rootroot"
-        login_host: "aws-study-test-awsstudyrds-q9e8lntsnewm.c9w2ki24y6sz.ap-northeast-1.rds.amazonaws.com"
+        login_host: "test-rds.c9w2ki24y6sz.ap-northeast-1.rds.amazonaws.com"
 
     - name: Check MySQL connection with password
       community.mysql.mysql_info:
         login_user: root
         login_password: "rootroot"
-        login_host: "aws-study-test-awsstudyrds-q9e8lntsnewm.c9w2ki24y6sz.ap-northeast-1.rds.amazonaws.com"
+        login_host: "test-rds.c9w2ki24y6sz.ap-northeast-1.rds.amazonaws.com"
 
-    - name: Create a database called StudentManagement
+    - name: Create a database called testdb
       community.mysql.mysql_db:
-        name: StudentManagement
+        name: testdb
         state: present
         login_user: root
         login_password: "rootroot"
-        login_host: "aws-study-test-awsstudyrds-q9e8lntsnewm.c9w2ki24y6sz.ap-northeast-1.rds.amazonaws.com"
+        login_host: "test-rds.c9w2ki24y6sz.ap-northeast-1.rds.amazonaws.com"
 
     - name: Create students table in the database
       community.mysql.mysql_query:
         login_user: root
         login_password: "rootroot"
-        login_host: "aws-study-test-awsstudyrds-q9e8lntsnewm.c9w2ki24y6sz.ap-northeast-1.rds.amazonaws.com"
-        login_db: StudentManagement  # ←作成済みのDB名に置き換えてください
+        login_host: "test-rds.c9w2ki24y6sz.ap-northeast-1.rds.amazonaws.com"
+        login_db: testdb 
         query: |
           CREATE TABLE IF NOT EXISTS students (
             studentId INT PRIMARY KEY AUTO_INCREMENT,
