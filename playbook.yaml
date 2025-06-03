@@ -43,6 +43,16 @@
         state: present
         key: https://repo.mysql.com/RPM-GPG-KEY-mysql-2023
 
+    - name: Import MySQL 2022 GPG key
+      ansible.builtin.rpm_key:
+        state: present
+        key: https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
+
+    - name: Import MySQL 2023 GPG key
+      ansible.builtin.rpm_key:
+        state: present
+        key: https://repo.mysql.com/RPM-GPG-KEY-mysql-2023
+
     - name: Install MySQL Yum Repository RPM
       ansible.builtin.dnf:
         name: /tmp/mysql80-community-release.rpm
